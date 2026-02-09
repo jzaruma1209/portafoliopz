@@ -16,6 +16,9 @@ export const metadata: Metadata = {
   title: "Paul Zaruma | Full-stack Developer",
   description:
     "Portafolio de Paul Zaruma - Desarrollador Full-stack apasionado por crear soluciones web excepcionales",
+  icons: {
+    icon: "/paul.png",
+  },
 };
 
 export default function RootLayout({
@@ -25,6 +28,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/paul.png" type="image/png" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
