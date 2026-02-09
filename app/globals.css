@@ -96,6 +96,32 @@ html {
   z-index: 0;
 }
 
+.bg-text-1 {
+  top: 5%;
+}
+
+.bg-text-2 {
+  top: 35%;
+}
+
+.bg-text-3 {
+  top: 65%;
+}
+
+@media (min-width: 768px) {
+  .bg-text-1 {
+    top: 0%;
+  }
+
+  .bg-text-2 {
+    top: 30%;
+  }
+
+  .bg-text-3 {
+    top: 60%;
+  }
+}
+
 .dark .bg-text {
   color: rgba(255, 255, 255, 0.02);
 }

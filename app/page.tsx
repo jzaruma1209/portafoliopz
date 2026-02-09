@@ -86,13 +86,13 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-start pt-20 md:pt-24">
         {/* Background Text */}
-        <div className="bg-text left-0" style={{ top: "2%" }}>
+        <div className="bg-text bg-text-1 left-0">
           PASSIONATE
         </div>
-        <div className="bg-text right-0" style={{ top: "20%" }}>
+        <div className="bg-text bg-text-2 right-0">
           DEVELOPER
         </div>
-        <div className="bg-text left-1/4" style={{ top: "60%" }}>
+        <div className="bg-text bg-text-3 left-1/4">
           CREATIVE
         </div>
 
@@ -109,7 +109,7 @@ export default function Home() {
               Full-stack Developer
             </h2>
             <p className="text-slate-500 dark:text-slate-400 text-base md:text-lg max-w-lg mx-auto md:mx-0 opacity-0 animate-fade-in animation-delay-600">
-              Apasionado por crear soluciones web excepcionales. Experiencia en
+              Desarrollo aplicaciones web modernas con
               <span className="text-slate-900 dark:text-white font-medium">
                 {" "}
                 React
@@ -122,14 +122,17 @@ export default function Home() {
               y
               <span className="text-slate-900 dark:text-white font-medium">
                 {" "}
-                Node.js
+                Tailwind CSS
               </span>
-              . Comprometido con el código limpio y las mejores prácticas.
+              , enfocándome en la experiencia del usuario, el diseño limpio y las buenas prácticas en frontend.
             </p>
             <p className="text-slate-500 dark:text-slate-400 text-base md:text-lg max-w-lg mx-auto md:mx-0 opacity-0 animate-fade-in animation-delay-600">
-              Enfocado no solo en desarrollar software de calidad, sino también
-              en compartir conocimiento y ayudar a otros desarrolladores a
-              crecer.
+              En backend, trabajo con
+              <span className="text-slate-900 dark:text-white font-medium">
+                {" "}
+                Node.js
+              </span>
+              , creando soluciones orientadas al rendimiento, mantenibles y preparadas para escalar.
             </p>
             <div className="pt-4 opacity-0 animate-fade-in animation-delay-600">
               <a
