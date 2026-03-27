@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import ThemeToggle from "@/app/components/ThemeToggle";
 import InteractiveParticles from "@/app/components/InteractiveParticles";
 import SplitText from "@/app/components/SplitText";
@@ -22,11 +22,44 @@ const techLogos = [
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const lastScrollY = useRef(0);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const controlNavbar = () => {
+      // Background effect
+      if (window.scrollY > 0) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+
+      // Hide on scroll down after threshold, show on scroll up
+      if (window.scrollY > lastScrollY.current && window.scrollY > 100) {
+        setIsVisible(false);
+        setMenuOpen(false); // Close mobile menu if open
+      } else {
+        setIsVisible(true);
+      }
+      
+      lastScrollY.current = window.scrollY;
+    };
+
+    window.addEventListener("scroll", controlNavbar);
+    return () => window.removeEventListener("scroll", controlNavbar);
+  }, []);
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-[#0f172a] text-slate-900 dark:text-white overflow-hidden transition-colors duration-300">
       {/* Navbar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 px-4 md:px-6 py-3 md:py-4 backdrop-blur-md bg-white/80 dark:bg-[#0f172a]/80 transition-colors duration-300">
+      <nav 
+        className={`fixed top-0 left-0 right-0 z-50 px-4 md:px-6 py-3 md:py-4 transition-all duration-300 ${
+          isScrolled ? "backdrop-blur-md bg-white/90 dark:bg-[#0f172a]/90 shadow-sm" : "bg-transparent"
+        } ${isVisible ? "translate-y-0" : "-translate-y-full"}`}
+      >
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <a href="#" className="text-xl font-bold z-50">
             Paul<span className="text-red-500">.dev</span>
