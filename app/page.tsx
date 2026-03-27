@@ -185,9 +185,17 @@ export default function Home() {
           <h2 className="text-3xl md:text-4xl font-bold mb-6 md:mb-8">
             ¿Quién soy?
           </h2>
-          <p className="text-slate-500 dark:text-slate-400 text-lg">
-            Esta sección estará próximamente disponible...
-          </p>
+          <div className="text-slate-600 dark:text-slate-300 text-lg md:text-xl space-y-4 text-left">
+            <p>
+              Soy desarrollador de software enfocado en crear herramientas digitales que ayuden a negocios y personas a trabajar mejor, automatizar procesos y crecer en el mundo digital.
+            </p>
+            <p>
+              Utilizo tecnologías modernas y cuento con una amplia experiencia trabajando con inteligencia artificial y herramientas actuales del ecosistema tecnológico. Además, poseo fundamentos sólidos en desarrollo de software, lo que me permite construir soluciones escalables, mantenibles y orientadas a resultados.
+            </p>
+            <p>
+              Me apasiona la programación porque combina lógica, creatividad y resolución de problemas reales. Disfruto convertir ideas en soluciones funcionales que aporten valor.
+            </p>
+          </div>
         </div>
       </section>
 
