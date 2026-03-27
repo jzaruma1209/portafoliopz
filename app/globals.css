@@ -97,28 +97,28 @@ html {
 }
 
 .bg-text-1 {
-  top: 5%;
+  top: 5vh;
 }
 
 .bg-text-2 {
-  top: 35%;
+  top: 35vh;
 }
 
 .bg-text-3 {
-  top: 65%;
+  top: 65vh;
 }
 
 @media (min-width: 768px) {
   .bg-text-1 {
-    top: 0%;
+    top: 5vh;
   }
 
   .bg-text-2 {
-    top: 30%;
+    top: 35vh;
   }
 
   .bg-text-3 {
-    top: 60%;
+    top: 65vh;
   }
 }
 
