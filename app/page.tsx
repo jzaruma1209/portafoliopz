@@ -21,6 +21,44 @@ const techLogos = [
   { node: <SiMongodb />, title: 'MongoDB', href: 'https://www.mongodb.com' }
 ];
 
+const projectsList = [
+  {
+    id: 1,
+    title: "Fortune Cookie 3D",
+    description: "Experiencia web interactiva con gráficos 3D en tiempo real y animaciones fluidas. El proyecto combina renderizado 3D mediante Three.js con animaciones dinámicas creadas con GSAP, tutto gestito con React y estilizado con Tailwind CSS para un diseño responsive y moderno.",
+    image: "/proyect1.png",
+    link: "https://galleta-de-la-fortuna-red.vercel.app/",
+    tags: [
+      "React 18.3.1", 
+      "Vite 5.3.4", 
+      "Three.js 0.167.0", 
+      "@react-three/fiber", 
+      "GSAP 3.14.2", 
+      "@gsap/react", 
+      "Tailwind CSS 3.4.6", 
+      "PostCSS", 
+      "Autoprefixer", 
+      "ESLint"
+    ]
+  },
+  {
+    id: 2,
+    title: "Proyecto 2",
+    description: "Descripción del proyecto 2. Una solución moderna desarrollada para resolver problemas complejos con tecnologías de última generación.",
+    image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1200&auto=format&fit=crop",
+    link: "#",
+    tags: ["Next.js", "Tailwind"]
+  },
+  {
+    id: 3,
+    title: "Proyecto 3",
+    description: "Descripción del proyecto 3. Una solución moderna desarrollada para resolver problemas complejos con tecnologías de última generación.",
+    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200&auto=format&fit=crop",
+    link: "#",
+    tags: ["Next.js", "Tailwind"]
+  }
+];
+
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -319,29 +357,40 @@ export default function Home() {
             blurAmount={2}
             useWindowScroll={true}
           >
-            {[1, 2, 3].map((id) => (
-              <ScrollStackItem key={id}>
+            {projectsList.map((project) => (
+              <ScrollStackItem key={project.id}>
                 <div className="bg-white dark:bg-slate-800 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-2xl flex flex-col md:flex-row min-h-[380px]">
                   <div className="w-full md:w-1/2 relative h-56 md:h-auto bg-slate-100 dark:bg-slate-700">
                     <Image
-                      src={`https://images.unsplash.com/photo-${id === 1 ? '1551288049-bebda4e38f71' : id === 2 ? '1516321318423-f06f85e504b3' : '1460925895917-afdab827c52f'}?q=80&w=1200&auto=format&fit=crop`}
-                      alt={`Proyecto ${id}`}
+                      src={project.image}
+                      alt={project.title}
                       fill
                       className="object-cover"
                       sizes="(max-width: 768px) 100vw, 50vw"
                     />
                   </div>
                   <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center text-left">
-                    <div className="flex gap-2 mb-4">
-                      <span className="px-3 py-1 text-xs font-semibold bg-red-500/10 text-red-500 rounded-full">Next.js</span>
-                      <span className="px-3 py-1 text-xs font-semibold bg-red-500/10 text-red-500 rounded-full">Tailwind</span>
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {project.tags.map((tag, tagIndex) => (
+                        <span key={tagIndex} className="px-3 py-1 text-xs font-semibold bg-red-500/10 text-red-500 rounded-full">
+                          {tag}
+                        </span>
+                      ))}
                     </div>
-                    <h3 className="text-2xl md:text-3xl font-bold mb-4 text-slate-900 dark:text-white">Proyecto {id}</h3>
-                    <p className="text-slate-600 dark:text-slate-400 text-base md:text-lg mb-6">
-                      Descripción del proyecto {id}. Una solución moderna desarrollada para resolver problemas complejos con tecnologías de última generación.
+                    <h3 className="text-2xl md:text-3xl font-bold mb-4 text-slate-900 dark:text-white">{project.title}</h3>
+                    <p className="text-slate-600 dark:text-slate-400 text-base md:text-lg mb-6 leading-relaxed">
+                      {project.description}
                     </p>
                     <div className="flex gap-4">
-                      <button className="px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl font-bold transition-colors">Ver proyecto</button>
+                      {project.link !== "#" ? (
+                        <a href={project.link} target="_blank" rel="noopener noreferrer" className="inline-block px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl font-bold transition-colors">
+                          Ver proyecto
+                        </a>
+                      ) : (
+                        <button className="px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl font-bold transition-colors">
+                          Ver proyecto
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
