@@ -1,0 +1,14 @@
+{
+  "css.validate": false,
+  "css.lint.unknownAtRules": "ignore",
+  "scss.validate": false,
+  "less.validate": false,
+  "editor.quickSuggestions": {
+    "strings": "on"
+  },
+  "files.associations": {
+    "*.css": "tailwindcss"
+  },
+  "tailwindCSS.experimental.classRegex": [],
+  "tailwindCSS.validate": true
+}
