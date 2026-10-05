@@ -1,0 +1,24 @@
+# Paul Zaruma – Desarrollador Web y Automatización en La Troncal, Cañar (Ecuador)
+
+> Paul Zaruma es un desarrollador de software full-stack con base en La Troncal, provincia del Cañar, Ecuador. Crea páginas web, tiendas online, sistemas a medida, chatbots de WhatsApp con inteligencia artificial y automatizaciones con n8n para negocios de La Troncal, la provincia del Cañar y todo Ecuador.
+
+## Servicios
+
+- Arquitectura de software: diseño de sistemas, modelado de datos y APIs pensadas para escalar.
+- Desarrollo web full-stack: páginas web y aplicaciones con React, Next.js, TypeScript y Node.js.
+- Automatización de procesos con n8n: ventas, notificaciones, reportes, CRM e integraciones entre herramientas, en servidor n8n propio (self-hosted).
+- Chatbots de WhatsApp y Messenger con IA: atención al cliente 24/7, ventas y pedidos conectados a catálogo, inventario y base de conocimiento.
+- E-commerce: tiendas online con pagos, gestión de pedidos y atención automatizada por WhatsApp.
+- Integración de APIs y webhooks, infraestructura propia (Docker, Linux), bases de datos (Supabase, PostgreSQL, MongoDB) y testing.
+
+## Zona de trabajo
+
+- Principal: La Troncal, Cañar, Ecuador (reuniones presenciales en la zona).
+- También: toda la provincia del Cañar y cualquier ciudad de Ecuador (Azogues, Cuenca, Guayaquil, Quito, Machala, etc.) de forma remota.
+
+## Contacto
+
+- Sitio web: https://paulzaruma.com
+- Email: zpaul3984@gmail.com
+- LinkedIn: https://www.linkedin.com/in/paul-zaruma-lopez-93663b386/
+- GitHub: https://github.com/jzaruma1209

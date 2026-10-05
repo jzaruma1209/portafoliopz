@@ -68,12 +68,17 @@ export default function TextType({
     pauseDuration,
   ]);
 
+  // The animated text starts empty on the server, so the full list is kept
+  // in a screen-reader-only span for crawlers and assistive tech.
   return (
-    <h2 className={className}>
-      {currentText}
-      {showCursor && (
-        <span className="animate-pulse">{cursorCharacter}</span>
-      )}
-    </h2>
+    <p className={className}>
+      <span className="sr-only">{words.join(", ")}</span>
+      <span aria-hidden="true">
+        {currentText}
+        {showCursor && (
+          <span className="animate-pulse">{cursorCharacter}</span>
+        )}
+      </span>
+    </p>
   );
 }

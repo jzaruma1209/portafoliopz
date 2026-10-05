@@ -2,30 +2,71 @@
 
 import { useState, useEffect, useRef } from "react";
 import ThemeToggle from "@/app/components/ThemeToggle";
-import InteractiveParticles from "@/app/components/InteractiveParticles";
+import PaulAvatar3D from "@/app/components/PaulAvatar3D";
 import SplitText from "@/app/components/SplitText";
 import TextType from "@/app/components/TextType";
 import ShinyText from "@/app/components/ShinyText";
 
 import LogoLoop from '@/app/components/LogoLoop';
 import ScrollStack, { ScrollStackItem } from "@/components/ScrollStack";
-import { SiReact, SiNextdotjs, SiTypescript, SiTailwindcss, SiNodedotjs, SiMongodb } from 'react-icons/si';
+import { SiReact, SiNextdotjs, SiTypescript, SiTailwindcss, SiNodedotjs, SiMongodb, SiN8N, SiSupabase, SiPostgresql, SiDocker, SiLinux, SiWhatsapp } from 'react-icons/si';
+import { FiLayers, FiCode, FiZap, FiMessageCircle, FiShoppingCart, FiServer, FiMapPin, FiChevronDown } from 'react-icons/fi';
 import Image from "next/image";
+import { siteConfig, faqList } from "@/lib/seo";
 
 const techLogos = [
   { node: <SiReact />, title: 'React', href: 'https://react.dev' },
   { node: <SiNextdotjs />, title: 'Next.js', href: 'https://nextjs.org' },
   { node: <SiTypescript />, title: 'TypeScript', href: 'https://www.typescriptlang.org' },
   { node: <SiNodedotjs />, title: 'Node.js', href: 'https://nodejs.org' },
+  { node: <SiN8N />, title: 'n8n', href: 'https://n8n.io' },
+  { node: <SiSupabase />, title: 'Supabase', href: 'https://supabase.com' },
+  { node: <SiPostgresql />, title: 'PostgreSQL', href: 'https://www.postgresql.org' },
+  { node: <SiWhatsapp />, title: 'WhatsApp Business API', href: 'https://business.whatsapp.com' },
+  { node: <SiDocker />, title: 'Docker', href: 'https://www.docker.com' },
+  { node: <SiLinux />, title: 'Linux', href: 'https://www.linux.org' },
   { node: <SiTailwindcss />, title: 'Tailwind CSS', href: 'https://tailwindcss.com' },
   { node: <SiMongodb />, title: 'MongoDB', href: 'https://www.mongodb.com' }
+];
+
+const servicesList = [
+  {
+    icon: <FiLayers />,
+    title: "Arquitectura de Software",
+    description: "Diseño sistemas sólidos desde el inicio: estructura de capas, modelado de datos, APIs bien definidas y decisiones técnicas pensadas para que tu producto crezca sin reescribirse."
+  },
+  {
+    icon: <FiCode />,
+    title: "Desarrollo Web Full-stack",
+    description: "Aplicaciones web y plataformas a medida con React, Next.js y Node.js. Interfaces rápidas y cuidadas, conectadas a un backend seguro y mantenible."
+  },
+  {
+    icon: <FiZap />,
+    title: "Automatización con n8n",
+    description: "Automatizo procesos repetitivos de tu negocio: ventas, notificaciones, reportes, CRM y flujos entre herramientas. Corriendo en mi propio servidor n8n, sin depender de planes limitados."
+  },
+  {
+    icon: <FiMessageCircle />,
+    title: "Chatbots de WhatsApp con IA",
+    description: "Asistentes inteligentes en WhatsApp y Messenger que responden, venden y atienden 24/7, conectados a tu base de conocimiento, catálogo e inventario."
+  },
+  {
+    icon: <FiShoppingCart />,
+    title: "E-commerce Integrado",
+    description: "Tiendas online completas, con pagos, gestión de pedidos y atención automatizada por WhatsApp. Tu cliente compra, consulta y recibe seguimiento sin fricción."
+  },
+  {
+    icon: <FiServer />,
+    title: "APIs, Infraestructura y Testing",
+    description: "Integración de APIs y webhooks, despliegue en servidores propios con Docker y Linux, y pruebas para que cada entrega llegue a producción estable y confiable."
+  }
 ];
 
 const projectsList = [
   {
     id: 1,
     title: "Fortune Cookie 3D",
-    description: "Experiencia web interactiva con gráficos 3D en tiempo real y animaciones fluidas. El proyecto combina renderizado 3D mediante Three.js con animaciones dinámicas creadas con GSAP, tutto gestito con React y estilizado con Tailwind CSS para un diseño responsive y moderno.",
+    description: "Experiencia web interactiva con gráficos 3D en tiempo real y animaciones fluidas. El proyecto combina renderizado 3D mediante Three.js con animaciones dinámicas creadas con GSAP, todo gestionado con React y estilizado con Tailwind CSS para un diseño responsive y moderno.",
     image: "/proyect1.png",
     link: "https://galleta-de-la-fortuna-red.vercel.app/",
     tags: [
@@ -115,6 +156,9 @@ export default function Home() {
             <a href="#about" className="hover:text-red-400 transition-colors">
               ¿Quién soy?
             </a>
+            <a href="#services" className="hover:text-red-400 transition-colors">
+              Servicios
+            </a>
             <a
               href="#projects"
               className="hover:text-red-400 transition-colors"
@@ -160,6 +204,13 @@ export default function Home() {
             ¿Quién soy?
           </a>
           <a
+            href="#services"
+            onClick={() => setMenuOpen(false)}
+            className="text-2xl hover:text-red-400 transition-colors"
+          >
+            Servicios
+          </a>
+          <a
             href="#projects"
             onClick={() => setMenuOpen(false)}
             className="text-2xl hover:text-red-400 transition-colors"
@@ -179,14 +230,14 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-start pt-20 md:pt-24">
         {/* Background Text */}
-        <div className="bg-text bg-text-1 left-0">
-          PASSIONATE
+        <div className="bg-text bg-text-1 left-0" aria-hidden="true">
+          ARCHITECT
         </div>
-        <div className="bg-text bg-text-2 right-0">
-          DEVELOPER
+        <div className="bg-text bg-text-2 right-0" aria-hidden="true">
+          AUTOMATION
         </div>
-        <div className="bg-text bg-text-3 left-1/4">
-          CREATIVE
+        <div className="bg-text bg-text-3 left-1/4" aria-hidden="true">
+          FULL-STACK
         </div>
 
         <div className="max-w-6xl mx-auto px-4 md:px-6 pb-8 grid md:grid-cols-2 gap-2 md:gap-12 items-center relative z-10">
@@ -213,7 +264,7 @@ export default function Home() {
             </div>
             <div className="opacity-0 animate-fade-in animation-delay-400">
               <TextType
-                texts={["Full-stack Developer", "Frontend Developer", "Backend Developer"]}
+                texts={["Arquitecto de Software", "Full-stack Developer", "Experto en Automatización", "Chatbots con IA"]}
                 className="text-2xl sm:text-3xl md:text-4xl font-bold text-red-500 min-h-[40px] md:min-h-[48px]"
                 typingSpeed={75}
                 pauseDuration={1500}
@@ -223,61 +274,60 @@ export default function Home() {
               />
             </div>
             <p className="text-slate-500 dark:text-slate-400 text-base md:text-lg max-w-lg mx-auto md:mx-0 opacity-0 animate-fade-in animation-delay-600">
-              Desarrollo aplicaciones web modernas con
+              Diseño y construyo sistemas digitales completos: desde la
+              <span className="text-slate-900 dark:text-white font-medium">
+                {" "}
+                arquitectura
+              </span>{" "}
+              y el backend hasta aplicaciones en
               <span className="text-slate-900 dark:text-white font-medium">
                 {" "}
                 React
-              </span>
-              ,
-              <span className="text-slate-900 dark:text-white font-medium">
-                {" "}
-                Next.js
               </span>{" "}
               y
               <span className="text-slate-900 dark:text-white font-medium">
                 {" "}
-                Tailwind CSS
+                Next.js
               </span>
-              , enfocándome en la experiencia del usuario, el diseño limpio y las buenas prácticas en frontend.
-            </p>
-            <p className="text-slate-500 dark:text-slate-400 text-base md:text-lg max-w-lg mx-auto md:mx-0 opacity-0 animate-fade-in animation-delay-600">
-              En backend, trabajo con
+              , automatizaciones con
               <span className="text-slate-900 dark:text-white font-medium">
                 {" "}
-                Node.js
+                n8n
+              </span>{" "}
+              y chatbots de
+              <span className="text-slate-900 dark:text-white font-medium">
+                {" "}
+                WhatsApp
+              </span>{" "}
+              con inteligencia artificial.
+            </p>
+            <p className="text-slate-500 dark:text-slate-400 text-base md:text-lg max-w-lg mx-auto md:mx-0 opacity-0 animate-fade-in animation-delay-600">
+              Administro mi propia infraestructura: servidores, n8n self-hosted, APIs y bases de datos. Entrego soluciones
+              <span className="text-slate-900 dark:text-white font-medium">
+                {" "}
+                listas para producción
               </span>
-              , creando soluciones orientadas al rendimiento, mantenibles y preparadas para escalar.
+              : probadas, seguras y preparadas para escalar con tu negocio.
+            </p>
+            <p className="flex items-center justify-center md:justify-start gap-2 text-sm md:text-base text-slate-500 dark:text-slate-400 opacity-0 animate-fade-in animation-delay-600">
+              <FiMapPin className="text-red-500 shrink-0" aria-hidden="true" />
+              <span>
+                Desarrollador web en <span className="text-slate-900 dark:text-white font-medium">La Troncal, Cañar</span> · Proyectos en todo Ecuador
+              </span>
             </p>
             <div className="pt-4 opacity-0 animate-fade-in animation-delay-600">
               <a
                 href="#contact"
                 className="btn-gradient inline-block px-6 md:px-8 py-3 md:py-4 rounded-lg text-white font-semibold text-sm md:text-base"
               >
-                ¡Contáctame!
+                ¡Hablemos de tu proyecto!
               </a>
             </div>
           </div>
 
-          {/* Avatar/Illustration placeholder */}
+          {/* Avatar: personaje voxel 3D animado */}
           <div className="flex justify-center items-center order-1 md:order-2">
-            <div className="relative">
-              <div className="w-56 h-56 sm:w-72 sm:h-72 md:w-80 lg:w-[28rem] md:h-80 lg:h-[28rem] rounded-full bg-gradient-to-br from-red-500/20 to-red-900/20 flex items-center justify-center animate-float">
-                <div className="w-48 h-48 sm:w-64 sm:h-64 md:w-72 lg:w-96 md:h-72 lg:h-96 rounded-full bg-gradient-to-br from-red-500/30 to-red-900/30 flex items-center justify-center overflow-hidden">
-                  <Image
-                    src="/paul.png"
-                    alt="Paul Zaruma"
-                    width={400}
-                    height={400}
-                    className="w-full h-full object-cover"
-                    priority
-                  />
-                </div>
-              </div>
-              {/* Decorative elements - Interactive particles */}
-              <div>
-                <InteractiveParticles />
-              </div>
-            </div>
+            <PaulAvatar3D />
           </div>
         </div>
 
@@ -305,13 +355,16 @@ export default function Home() {
           />
           <div className="text-slate-600 dark:text-slate-300 text-lg md:text-xl space-y-4 text-left">
             <p>
-              Soy desarrollador de software enfocado en crear herramientas digitales que ayuden a negocios y personas a trabajar mejor, automatizar procesos y crecer en el mundo digital.
+              Soy desarrollador de software full-stack con enfoque en arquitectura y automatización. Ayudo a empresas y emprendedores a convertir procesos manuales en sistemas que trabajan solos: más ventas, menos tareas repetitivas y una operación que escala.
             </p>
             <p>
-              Utilizo tecnologías modernas y cuento con una amplia experiencia trabajando con inteligencia artificial y herramientas actuales del ecosistema tecnológico. Además, poseo fundamentos sólidos en desarrollo de software, lo que me permite construir soluciones escalables, mantenibles y orientadas a resultados.
+              Mi trabajo abarca todo el ciclo: diseño la arquitectura, desarrollo el frontend y el backend, integro APIs y webhooks, construyo flujos de automatización en n8n y conecto chatbots de WhatsApp con inteligencia artificial a tiendas online, CRMs y bases de datos. Todo corre sobre mi propio servidor, con control total sobre rendimiento, seguridad y costos.
             </p>
             <p>
-              Me apasiona la programación porque combina lógica, creatividad y resolución de problemas reales. Disfruto convertir ideas en soluciones funcionales que aporten valor.
+              Trabajo desde La Troncal, en la provincia del Cañar, con negocios de la zona a los que puedo visitar en persona, y con clientes de todo Ecuador de forma remota.
+            </p>
+            <p>
+              No solo escribo código: pruebo, despliego y mantengo. Mi objetivo es que cada solución resuelva un problema real del negocio y siga funcionando el día que más la necesitas.
             </p>
           </div>
           <div className="mt-12 pt-8 border-t border-slate-200 dark:border-white/10 w-full overflow-hidden">
@@ -326,6 +379,40 @@ export default function Home() {
               fadeOut
               ariaLabel="Mi Stack Tecnológico"
             />
+          </div>
+        </div>
+      </section>
+
+      {/* Services Section */}
+      <section
+        id="services"
+        className="py-20 md:py-28 px-4 md:px-6 bg-slate-50 dark:bg-slate-900 transition-colors duration-300"
+      >
+        <div className="max-w-6xl w-full mx-auto text-center">
+          <SplitText
+            text="¿Qué puedo hacer por ti?"
+            className="text-3xl md:text-4xl font-bold mb-3 md:mb-4"
+            tag="h2"
+            delay={60}
+            duration={0.8}
+          />
+          <p className="text-slate-500 dark:text-slate-400 text-lg mb-10 md:mb-14 max-w-2xl mx-auto">
+            Soluciones de punta a punta: desde la idea y la arquitectura hasta un sistema automatizado funcionando en producción.
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 text-left">
+            {servicesList.map((service) => (
+              <div
+                key={service.title}
+                className="group flex flex-col gap-4 p-6 md:p-8 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 hover:border-red-400 dark:hover:border-red-500 hover:shadow-lg hover:shadow-red-500/10 transition-all duration-300"
+              >
+                <div className="w-14 h-14 rounded-xl bg-red-500/10 dark:bg-red-500/20 flex items-center justify-center text-red-500 text-2xl group-hover:scale-110 transition-transform duration-300">
+                  {service.icon}
+                </div>
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white">{service.title}</h3>
+                <p className="text-slate-600 dark:text-slate-400 leading-relaxed">{service.description}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -400,6 +487,40 @@ export default function Home() {
         </div>
       </section>
 
+      {/* FAQ Section */}
+      <section
+        id="faq"
+        className="py-20 md:py-28 px-4 md:px-6 bg-slate-50 dark:bg-slate-900 transition-colors duration-300"
+      >
+        <div className="max-w-3xl w-full mx-auto">
+          <div className="text-center">
+            <SplitText
+              text="Preguntas frecuentes"
+              className="text-3xl md:text-4xl font-bold mb-10 md:mb-14"
+              tag="h2"
+              delay={60}
+              duration={0.8}
+            />
+          </div>
+          <div className="space-y-4">
+            {faqList.map((faq) => (
+              <details
+                key={faq.question}
+                className="group rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 open:border-red-400 dark:open:border-red-500 transition-colors duration-300"
+              >
+                <summary className="flex items-center justify-between gap-4 cursor-pointer list-none p-5 md:p-6 font-semibold text-slate-900 dark:text-white [&::-webkit-details-marker]:hidden">
+                  <h3 className="text-base md:text-lg">{faq.question}</h3>
+                  <FiChevronDown className="shrink-0 text-red-500 transition-transform duration-300 group-open:rotate-180" aria-hidden="true" />
+                </summary>
+                <p className="px-5 md:px-6 pb-5 md:pb-6 text-slate-600 dark:text-slate-400 leading-relaxed">
+                  {faq.answer}
+                </p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Contact Section */}
       <section
         id="contact"
@@ -413,14 +534,18 @@ export default function Home() {
             delay={60}
             duration={0.8}
           />
-          <p className="text-slate-500 dark:text-slate-400 text-lg mb-10 md:mb-14">
-            ¿Quieres trabajar conmigo? Encuéntrame aquí
+          <p className="text-slate-500 dark:text-slate-400 text-lg mb-3">
+            ¿Tienes un proceso que automatizar, una tienda que lanzar o un sistema que escalar? Escríbeme y lo convertimos en una solución real.
+          </p>
+          <p className="flex items-center justify-center gap-2 text-slate-500 dark:text-slate-400 mb-10 md:mb-14">
+            <FiMapPin className="text-red-500 shrink-0" aria-hidden="true" />
+            {siteConfig.city}, {siteConfig.region} · Atiendo en todo {siteConfig.country}
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
             {/* Email */}
             <a
-              href="mailto:jzaruma1209@gmail.com"
+              href={`mailto:${siteConfig.email}`}
               className="group flex flex-col items-center gap-4 p-6 md:p-8 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 hover:border-red-400 dark:hover:border-red-500 hover:shadow-lg hover:shadow-red-500/10 transition-all duration-300"
             >
               <div className="w-14 h-14 rounded-xl bg-red-500/10 dark:bg-red-500/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
@@ -431,7 +556,7 @@ export default function Home() {
               <div>
                 <p className="font-semibold text-slate-900 dark:text-white mb-1">Email</p>
                 <p className="text-sm text-slate-500 dark:text-slate-400 group-hover:text-red-400 transition-colors break-all">
-                  jzaruma1209@gmail.com
+                  {siteConfig.email}
                 </p>
               </div>
             </a>
