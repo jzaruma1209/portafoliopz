@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { siteConfig, serviceNames, faqList } from "@/lib/seo";
@@ -15,13 +15,21 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
-  title: siteConfig.title,
+  title: {
+    default: siteConfig.title,
+    template: `%s | ${siteConfig.name}`,
+  },
   description: siteConfig.description,
+  applicationName: siteConfig.name,
+  category: "technology",
   keywords: [
     "desarrollador web La Troncal",
     "páginas web La Troncal",
     "desarrollador web Cañar",
     "diseño web Cañar",
+    "páginas web Azogues",
+    "desarrollador web Cuenca",
+    "programador La Troncal",
     "desarrollador de software Ecuador",
     "desarrollador full-stack Ecuador",
     "chatbot WhatsApp Ecuador",
@@ -32,6 +40,7 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: siteConfig.name, url: siteConfig.url }],
   creator: siteConfig.name,
+  publisher: siteConfig.name,
   alternates: {
     canonical: "/",
   },
@@ -59,14 +68,30 @@ export const metadata: Metadata = {
       "max-video-preview": -1,
     },
   },
+  // Código de verificación de Google Search Console (variable de entorno opcional)
+  verification: {
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
+  },
   other: {
     "geo.region": siteConfig.regionCode,
     "geo.placename": `${siteConfig.city}, ${siteConfig.region}, ${siteConfig.country}`,
-  },
-  icons: {
-    icon: "/paul.png",
+    "geo.position": `${siteConfig.geo.latitude};${siteConfig.geo.longitude}`,
+    ICBM: `${siteConfig.geo.latitude}, ${siteConfig.geo.longitude}`,
   },
 };
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f8fafc" },
+    { media: "(prefers-color-scheme: dark)", color: "#0f172a" },
+  ],
+};
+
+// Imágenes generadas por app/opengraph-image.tsx y app/icon.tsx
+const ogImage = `${siteConfig.url}/opengraph-image`;
+const logo = `${siteConfig.url}/icon`;
 
 const address = {
   "@type": "PostalAddress",
@@ -88,6 +113,18 @@ const jsonLd = {
       publisher: { "@id": `${siteConfig.url}/#person` },
     },
     {
+      "@type": "WebPage",
+      "@id": `${siteConfig.url}/#webpage`,
+      url: siteConfig.url,
+      name: siteConfig.title,
+      description: siteConfig.description,
+      inLanguage: "es-EC",
+      isPartOf: { "@id": `${siteConfig.url}/#website` },
+      about: { "@id": `${siteConfig.url}/#business` },
+      mainEntity: { "@id": `${siteConfig.url}/#person` },
+      primaryImageOfPage: { "@type": "ImageObject", url: ogImage, width: 1200, height: 630 },
+    },
+    {
       "@type": "Person",
       "@id": `${siteConfig.url}/#person`,
       name: siteConfig.name,
@@ -95,7 +132,7 @@ const jsonLd = {
       jobTitle: siteConfig.jobTitle,
       description: siteConfig.description,
       url: siteConfig.url,
-      image: `${siteConfig.url}/paul.png`,
+      image: ogImage,
       email: `mailto:${siteConfig.email}`,
       address,
       sameAs: [siteConfig.linkedin, siteConfig.github],
@@ -124,10 +161,16 @@ const jsonLd = {
       name: `${siteConfig.name} – Desarrollo Web y Automatización`,
       description: siteConfig.description,
       url: siteConfig.url,
-      image: `${siteConfig.url}/paul.png`,
+      image: ogImage,
+      logo,
       email: siteConfig.email,
       founder: { "@id": `${siteConfig.url}/#person` },
       address,
+      geo: {
+        "@type": "GeoCoordinates",
+        latitude: siteConfig.geo.latitude,
+        longitude: siteConfig.geo.longitude,
+      },
       areaServed: [
         { "@type": "City", name: `${siteConfig.city}, ${siteConfig.region}` },
         { "@type": "AdministrativeArea", name: `Provincia del ${siteConfig.region}` },
@@ -162,9 +205,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es-EC" suppressHydrationWarning>
-      <head>
-        <link rel="icon" href="/paul.png" type="image/png" />
-      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning

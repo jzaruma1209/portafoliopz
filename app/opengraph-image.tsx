@@ -20,7 +20,7 @@ export default function OpengraphImage() {
           color: "#ffffff",
         }}
       >
-        <div style={{ fontSize: 32, color: "#f87171" }}>paulzaruma.com</div>
+        <div style={{ fontSize: 32, color: "#f87171" }}>{siteConfig.domain}</div>
         <div style={{ fontSize: 96, fontWeight: 700, marginTop: 16 }}>Paul Zaruma</div>
         <div style={{ fontSize: 48, fontWeight: 700, color: "#ef4444", marginTop: 8 }}>
           Desarrollador Web y Automatización

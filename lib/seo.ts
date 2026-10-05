@@ -1,17 +1,24 @@
+// Dominio canónico. Se puede cambiar sin tocar código con NEXT_PUBLIC_SITE_URL
+// (por ejemplo en las variables de entorno de Vercel).
+const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://paulzaruma.com").replace(/\/+$/, "");
+
 export const siteConfig = {
-  url: "https://paulzaruma.com",
+  url: siteUrl,
+  domain: new URL(siteUrl).host,
   name: "Paul Zaruma",
   fullName: "Paul Zaruma López",
   jobTitle: "Desarrollador de Software Full-stack",
   email: "zpaul3984@gmail.com",
   title: "Desarrollador Web en La Troncal, Cañar | Paul Zaruma",
   description:
-    "Desarrollador de software full-stack en La Troncal, Cañar. Creo páginas web, tiendas online, chatbots de WhatsApp con IA y automatizaciones con n8n para negocios de todo Ecuador.",
+    "Desarrollador web en La Troncal, Cañar. Creo páginas web, tiendas online, chatbots de WhatsApp con IA y automatizaciones n8n para negocios de todo Ecuador.",
   city: "La Troncal",
   region: "Cañar",
   regionCode: "EC-F",
   country: "Ecuador",
   countryCode: "EC",
+  // Centro aproximado de La Troncal (para el SEO local)
+  geo: { latitude: -2.42, longitude: -79.34 },
   linkedin: "https://www.linkedin.com/in/paul-zaruma-lopez-93663b386/",
   github: "https://github.com/jzaruma1209",
 };
