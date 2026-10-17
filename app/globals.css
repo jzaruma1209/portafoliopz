@@ -178,6 +178,19 @@ body {
   animation-delay: 0.6s;
 }
 
+/* Hero: el texto espera a que aparezca el personaje (.hero-ready en <section>).
+   Sin JS el texto queda oculto aquí, pero sigue en el HTML para SEO. */
+.hero-anim {
+  opacity: 0;
+}
+
+.hero-ready .hero-anim {
+  animation-name: fadeIn;
+  animation-duration: 0.8s;
+  animation-timing-function: ease-out;
+  animation-fill-mode: forwards;
+}
+
 /* Texto de fondo */
 .bg-text {
   position: absolute;
