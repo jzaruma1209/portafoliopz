@@ -11,17 +11,10 @@ import type { PaulScene } from "@/app/components/paul3d/createPaulScene";
  * Mientras carga Three.js (o si el navegador no tiene WebGL) se ve la imagen
  * /paul.png, que además sigue en el HTML para SEO y como LCP.
  */
-export default function PaulAvatar3D({ onImageReady }: { onImageReady?: () => void }) {
+export default function PaulAvatar3D() {
   const rootRef = useRef<HTMLDivElement>(null);
   const hostRef = useRef<HTMLDivElement>(null);
-  const imgRef = useRef<HTMLImageElement>(null);
   const [ready, setReady] = useState(false);
-
-  // La imagen puede terminar de cargar antes de hidratar; onLoad no se dispara en ese caso
-  useEffect(() => {
-    const img = imgRef.current;
-    if (img?.complete) onImageReady?.();
-  }, [onImageReady]);
 
   useEffect(() => {
     const root = rootRef.current;
@@ -62,9 +55,6 @@ export default function PaulAvatar3D({ onImageReady }: { onImageReady?: () => vo
               width={400}
               height={400}
               className={`w-full h-full object-cover transition-opacity duration-700 ${ready ? "opacity-0" : "opacity-100"}`}
-              ref={imgRef}
-              onLoad={() => onImageReady?.()}
-              onError={() => onImageReady?.()}
               priority
             />
           </div>

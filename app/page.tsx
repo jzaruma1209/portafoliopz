@@ -104,15 +104,7 @@ export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
-  // El texto del hero entra cuando aparece el personaje (ver PaulAvatar3D)
-  const [heroIn, setHeroIn] = useState(false);
   const lastScrollY = useRef(0);
-
-  useEffect(() => {
-    // Respaldo: si la imagen nunca carga, el texto igual se muestra
-    const fallback = setTimeout(() => setHeroIn(true), 2500);
-    return () => clearTimeout(fallback);
-  }, []);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -236,7 +228,7 @@ export default function Home() {
       </nav>
 
       {/* Hero Section */}
-      <section className={`relative min-h-screen flex items-start pt-20 md:pt-24 ${heroIn ? "hero-ready" : ""}`}>
+      <section className="relative min-h-screen flex items-start pt-20 md:pt-24">
         {/* Background Text */}
         <div className="bg-text bg-text-1 left-0" aria-hidden="true">
           ARCHITECT
@@ -251,10 +243,10 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-4 md:px-6 pb-8 grid md:grid-cols-2 gap-2 md:gap-12 items-center relative z-10">
           {/* Content */}
           <div className="space-y-3 md:space-y-6 text-center md:text-left order-2 md:order-1">
-            <p className="text-red-400 text-base md:text-lg hero-anim">
+            <p className="text-red-400 text-base md:text-lg opacity-0 animate-fade-in">
               Hola, mi nombre es
             </p>
-            <div className="hero-anim animation-delay-200">
+            <div className="opacity-0 animate-fade-in animation-delay-200">
               <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold">
                 <ShinyText
                   text="Paul Zaruma"
@@ -270,7 +262,7 @@ export default function Home() {
                 />
               </h1>
             </div>
-            <div className="hero-anim animation-delay-400">
+            <div className="opacity-0 animate-fade-in animation-delay-400">
               <TextType
                 texts={["Arquitecto de Software", "Full-stack Developer", "Experto en Automatización", "Chatbots con IA"]}
                 className="text-2xl sm:text-3xl md:text-4xl font-bold text-red-500 min-h-[40px] md:min-h-[48px]"
@@ -281,7 +273,7 @@ export default function Home() {
                 deletingSpeed={50}
               />
             </div>
-            <p className="text-slate-500 dark:text-slate-400 text-base md:text-lg max-w-lg mx-auto md:mx-0 hero-anim animation-delay-600">
+            <p className="text-slate-500 dark:text-slate-400 text-base md:text-lg max-w-lg mx-auto md:mx-0 opacity-0 animate-fade-in animation-delay-600">
               Diseño y construyo sistemas digitales completos: desde la
               <span className="text-slate-900 dark:text-white font-medium">
                 {" "}
@@ -309,7 +301,7 @@ export default function Home() {
               </span>{" "}
               con inteligencia artificial.
             </p>
-            <p className="text-slate-500 dark:text-slate-400 text-base md:text-lg max-w-lg mx-auto md:mx-0 hero-anim animation-delay-600">
+            <p className="text-slate-500 dark:text-slate-400 text-base md:text-lg max-w-lg mx-auto md:mx-0 opacity-0 animate-fade-in animation-delay-600">
               Administro mi propia infraestructura: servidores, n8n self-hosted, APIs y bases de datos. Entrego soluciones
               <span className="text-slate-900 dark:text-white font-medium">
                 {" "}
@@ -317,13 +309,13 @@ export default function Home() {
               </span>
               : probadas, seguras y preparadas para escalar con tu negocio.
             </p>
-            <p className="flex items-center justify-center md:justify-start gap-2 text-sm md:text-base text-slate-500 dark:text-slate-400 hero-anim animation-delay-600">
+            <p className="flex items-center justify-center md:justify-start gap-2 text-sm md:text-base text-slate-500 dark:text-slate-400 opacity-0 animate-fade-in animation-delay-600">
               <FiMapPin className="text-red-500 shrink-0" aria-hidden="true" />
               <span>
                 Desarrollador web en <span className="text-slate-900 dark:text-white font-medium">La Troncal, Cañar</span> · Proyectos en todo Ecuador
               </span>
             </p>
-            <div className="pt-4 hero-anim animation-delay-600">
+            <div className="pt-4 opacity-0 animate-fade-in animation-delay-600">
               <a
                 href="#contact"
                 className="btn-gradient inline-block px-6 md:px-8 py-3 md:py-4 rounded-lg text-white font-semibold text-sm md:text-base"
@@ -335,7 +327,7 @@ export default function Home() {
 
           {/* Avatar: personaje voxel 3D animado */}
           <div className="flex justify-center items-center order-1 md:order-2">
-            <PaulAvatar3D onImageReady={() => setHeroIn(true)} />
+            <PaulAvatar3D />
           </div>
         </div>
 
