@@ -15,12 +15,12 @@ import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
  * la rueda para no bloquear el scroll, y se pausa cuando no está en pantalla).
  */
 
-export type PaulAction = "idle" | "wave" | "tpose" | "thumbs" | "dance" | "jump";
+export type PaulAction = "idle" | "wave" | "bye" | "tpose" | "thumbs" | "dance" | "jump";
 
 export interface PaulSceneOptions {
   /** Elemento donde se inserta el canvas (define el tamaño del render). */
   host: HTMLElement;
-  /** Elemento que recibe arrastre (girar) y clic (siguiente animación). */
+  /** Elemento que recibe arrastre (girar) y clic (saludar). */
   interaction: HTMLElement;
   /** Familias CSS para el estampado de la camiseta. */
   fonts: { slab: string; sans: string };
@@ -29,7 +29,6 @@ export interface PaulSceneOptions {
 
 export interface PaulScene {
   play(name: PaulAction): void;
-  next(): void;
   dispose(): void;
 }
 
@@ -617,6 +616,15 @@ const ACTIONS: Record<PaulAction, { dur: number; pose: (t: number) => Pose }> = 
       return Object.assign(p, { shRzR: 16, shFwR: 14, shTwR: 0, elFlexR: 0, elUpR: 100 + w * 16, hdBendR: w * 10, headRz: -5, headRy: -10, torsoRz: -2.5, headRx: -2 });
     },
   },
+  // Despedida al hacer scroll: cabeza gacha y un adiós más lento y amplio
+  bye: {
+    dur: 2.8,
+    pose: (t) => {
+      const p = relaxed(t);
+      const w = Math.sin(t * 7);
+      return Object.assign(p, { shRzR: 8, shFwR: 18, shTwR: 0, elFlexR: 0, elUpR: 104 + w * 22, hdBendR: w * 14, headRz: -7, headRy: -8, headRx: 10, torsoRz: -2, torsoRx: 3 });
+    },
+  },
   tpose: {
     dur: 3.0,
     pose: (t) => {
@@ -677,7 +685,11 @@ const ACTIONS: Record<PaulAction, { dur: number; pose: (t: number) => Pose }> = 
   },
 };
 const SEQUENCE: PaulAction[] = ["idle", "wave", "idle", "tpose", "idle", "thumbs", "idle", "dance", "idle", "jump"];
-const CLICK_ACTIONS: PaulAction[] = ["wave", "jump", "dance", "thumbs", "tpose"];
+
+// Mirada (grados): cuánto gira hacia el puntero y cuánto agacha la cabeza al hacer scroll
+const LOOK_YAW = 40, LOOK_UP = 20, LOOK_DOWN = 24, SCROLL_TILT = 26;
+// Scroll (px): se despide al pasar BYE_AT bajando y saluda al volver por debajo de HELLO_AT
+const BYE_AT = 60, HELLO_AT = 30, TILT_RANGE = 260;
 
 /* ------------------------------------------------------------------ *
  *  Escena
@@ -829,26 +841,64 @@ export function createPaulScene({ host, interaction, fonts, onReady }: PaulScene
     });
   }
 
-  // Clic / toque sin arrastrar → siguiente animación
+  // Clic / toque sin arrastrar → saluda
   let down: { x: number; y: number; t: number } | null = null;
-  let clickIdx = 0;
   on(interaction, "pointerdown", ((e: PointerEvent) => { down = { x: e.clientX, y: e.clientY, t: performance.now() }; }) as EventListener);
   on(interaction, "pointerup", ((e: PointerEvent) => {
     if (!down) return;
     const moved = Math.hypot(e.clientX - down.x, e.clientY - down.y);
-    if (moved < 6 && performance.now() - down.t < 500) api.next();
+    if (moved < 6 && performance.now() - down.t < 500) api.play("wave");
     down = null;
   }) as EventListener);
 
-  // La cabeza sigue ligeramente al puntero
+  // La cabeza (y un poco el torso) sigue al puntero; los ángulos se recalculan
+  // en cada cuadro para que la mirada siga fija aunque la página se desplace.
+  const pointer = { x: 0, y: 0, active: false };
   const look = { x: 0, y: 0, tx: 0, ty: 0 };
+  const EYES = new THREE.Vector3(0, 42, 11.5); // entre las gafas, en coordenadas del torso
+  const eyes = new THREE.Vector3();
   if (fine) {
     on(window, "pointermove", ((e: PointerEvent) => {
-      const r = host.getBoundingClientRect();
-      look.tx = THREE.MathUtils.clamp((e.clientX - (r.left + r.width / 2)) / (innerWidth / 2), -1, 1);
-      look.ty = THREE.MathUtils.clamp((e.clientY - (r.top + r.height * 0.3)) / (innerHeight / 2), -1, 1);
+      pointer.x = e.clientX;
+      pointer.y = e.clientY;
+      pointer.active = true;
     }) as EventListener, { passive: true });
+    on(document.documentElement, "mouseleave", () => { pointer.active = false; });
   }
+  const aimAtPointer = (az: number) => {
+    if (!pointer.active) {
+      look.tx = look.ty = 0;
+      return;
+    }
+    const r = host.getBoundingClientRect();
+    eyes.copy(EYES);
+    J.torso.localToWorld(eyes).project(camera);
+    const dx = pointer.x - (r.left + ((eyes.x + 1) / 2) * r.width);
+    const dy = pointer.y - (r.top + ((1 - eyes.y) / 2) * r.height);
+    // Como si el puntero estuviera a media altura del contenedor delante de él:
+    // cerca de la cara reacciona rápido y lejos se satura en el giro máximo.
+    const depth = r.height * 0.5;
+    look.tx = THREE.MathUtils.clamp(THREE.MathUtils.radToDeg(az + Math.atan2(dx, depth)), -LOOK_YAW, LOOK_YAW);
+    look.ty = THREE.MathUtils.clamp(THREE.MathUtils.radToDeg(Math.atan2(dy, depth)), -LOOK_UP, LOOK_DOWN);
+  };
+
+  // Al bajar con el scroll agacha la cabeza y se despide; al volver arriba saluda
+  const scroll = { v: 0, t: 0, away: false };
+  const readScroll = () => {
+    const y = window.scrollY;
+    scroll.t = reduceMotion ? 0 : clamp01(y / TILT_RANGE);
+    if (!scroll.away && y > BYE_AT) {
+      scroll.away = true;
+      if (ready && !reduceMotion) api.play("bye");
+    } else if (scroll.away && y < HELLO_AT) {
+      scroll.away = false;
+      if (ready && !reduceMotion) api.play("wave");
+    }
+  };
+  // Si la página carga ya desplazada, arranca mirando abajo pero sin despedirse
+  scroll.away = window.scrollY > BYE_AT;
+  scroll.t = scroll.v = reduceMotion ? 0 : clamp01(window.scrollY / TILT_RANGE);
+  on(window, "scroll", readScroll, { passive: true });
 
   // Animación
   const anim = { name: "idle" as PaulAction, t: 0, seq: 0, from: null as Pose | null, blend: 1, last: relaxed(0) };
@@ -857,7 +907,8 @@ export function createPaulScene({ host, interaction, fonts, onReady }: PaulScene
     anim.blend = 0;
     anim.name = name;
     anim.t = 0;
-    if (!fromSequence) anim.seq = Math.max(0, SEQUENCE.indexOf(name));
+    // La despedida no está en la secuencia: después sigue como tras un saludo
+    if (!fromSequence) anim.seq = Math.max(0, SEQUENCE.indexOf(name === "bye" ? "wave" : name));
   };
 
   const applyPose = (p: Pose) => {
@@ -895,10 +946,22 @@ export function createPaulScene({ host, interaction, fonts, onReady }: PaulScene
     const w = smooth(anim.blend), out: Pose = {};
     for (const k of KEYS) out[k] = anim.from ? lerp(anim.from[k] || 0, tgt[k] || 0, w) : tgt[k] || 0;
     anim.last = out;
-    look.x += (look.tx - look.x) * Math.min(1, dt * 4);
-    look.y += (look.ty - look.y) * Math.min(1, dt * 4);
-    const facing = Math.max(0, Math.cos(Math.atan2(camera.position.x, camera.position.z)));
-    applyPose({ ...out, headRy: out.headRy + look.x * 16 * facing, headRx: out.headRx + look.y * 7 * facing });
+    const az = Math.atan2(camera.position.x, camera.position.z);
+    const facing = Math.max(0, Math.cos(az));
+    aimAtPointer(az);
+    look.x += (look.tx - look.x) * Math.min(1, dt * 6);
+    look.y += (look.ty - look.y) * Math.min(1, dt * 6);
+    scroll.v += (scroll.t - scroll.v) * Math.min(1, dt * 5);
+    // El torso acompaña parte del giro; con el scroll la mirada baja y deja de seguir el puntero en vertical
+    const yaw = look.x * facing;
+    const pitch = lerp(look.y * facing, SCROLL_TILT, scroll.v);
+    applyPose({
+      ...out,
+      torsoRy: out.torsoRy + yaw * 0.22,
+      torsoRx: out.torsoRx + pitch * 0.12,
+      headRy: out.headRy + yaw * 0.78,
+      headRx: THREE.MathUtils.clamp(out.headRx + pitch * 0.88, -24, 34),
+    });
   };
 
   // Bucle de render (se pausa fuera de pantalla o con la pestaña oculta)
@@ -978,9 +1041,6 @@ export function createPaulScene({ host, interaction, fonts, onReady }: PaulScene
   const api: PaulScene = {
     play(name) {
       if (!disposed) setAction(name, false);
-    },
-    next() {
-      setAction(CLICK_ACTIONS[clickIdx++ % CLICK_ACTIONS.length], false);
     },
     dispose() {
       if (disposed) return;

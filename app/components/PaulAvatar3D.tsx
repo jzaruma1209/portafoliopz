@@ -90,8 +90,8 @@ export default function PaulAvatar3D() {
         className={`mt-6 md:mt-8 text-xs text-slate-500 dark:text-slate-400 transition-opacity duration-700 ${ready ? "opacity-100" : "opacity-0"}`}
         aria-hidden={!ready}
       >
-        <span className="hidden pointer-fine:inline">Arrástrame para girarme · clic para otra animación</span>
-        <span className="pointer-fine:hidden">Tócame para ver otra animación</span>
+        <span className="hidden pointer-fine:inline">Arrástrame para girarme · clic para que te salude</span>
+        <span className="pointer-fine:hidden">Tócame para que te salude</span>
       </p>
     </div>
   );
