@@ -66,7 +66,7 @@ export default function InteractiveParticles() {
     <div
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="absolute -inset-12"
+      className="absolute -inset-6 sm:-inset-12"
       style={{ zIndex: 5 }}
     >
       {particlesData.map((p, idx) => (

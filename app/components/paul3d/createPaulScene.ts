@@ -16,15 +16,23 @@ import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
  */
 
 export type PaulAction = "idle" | "wave" | "bye" | "tpose" | "thumbs" | "dance" | "jump";
+/** Momentos en los que habla: clic, despedida al bajar y saludo al volver arriba. */
+export type PaulSay = "click" | "bye" | "hello";
 
 export interface PaulSceneOptions {
   /** Elemento donde se inserta el canvas (define el tamaño del render). */
   host: HTMLElement;
-  /** Elemento que recibe arrastre (girar) y clic (saludar). */
+  /**
+   * Elemento que recibe arrastre (girar) y clic (saludar). Mientras habla se le
+   * escriben --say-x / --say-y (junto a la boca), --say-room (ancho libre a la derecha)
+   * y --say-shift (cuánto correr el globo a la izquierda si no cabe).
+   */
   interaction: HTMLElement;
   /** Familias CSS para el estampado de la camiseta. */
   fonts: { slab: string; sans: string };
   onReady?: () => void;
+  /** Mostrar el globo de diálogo (o esconderlo con null). */
+  onSay?: (kind: PaulSay | null) => void;
 }
 
 export interface PaulScene {
@@ -690,11 +698,13 @@ const SEQUENCE: PaulAction[] = ["idle", "wave", "idle", "tpose", "idle", "thumbs
 const LOOK_YAW = 40, LOOK_UP = 20, LOOK_DOWN = 24, SCROLL_TILT = 26;
 // Scroll (px): se despide al pasar BYE_AT bajando y saluda al volver por debajo de HELLO_AT
 const BYE_AT = 60, HELLO_AT = 30, TILT_RANGE = 260;
+// Segundos que dura el globo de diálogo y su ancho mínimo en px (igual al 7.5rem del componente)
+const SAY_TIME = 3.2, SAY_MIN_W = 120;
 
 /* ------------------------------------------------------------------ *
  *  Escena
  * ------------------------------------------------------------------ */
-export function createPaulScene({ host, interaction, fonts, onReady }: PaulSceneOptions): PaulScene {
+export function createPaulScene({ host, interaction, fonts, onReady, onSay }: PaulSceneOptions): PaulScene {
   let disposed = false;
   const cleanups: (() => void)[] = [];
   const on = (target: EventTarget, type: string, fn: EventListener, opts?: AddEventListenerOptions) => {
@@ -841,15 +851,50 @@ export function createPaulScene({ host, interaction, fonts, onReady }: PaulScene
     });
   }
 
-  // Clic / toque sin arrastrar → saluda
-  let down: { x: number; y: number; t: number } | null = null;
-  on(interaction, "pointerdown", ((e: PointerEvent) => { down = { x: e.clientX, y: e.clientY, t: performance.now() }; }) as EventListener);
+  // Clic / toque sin arrastrar → saluda (con el dedo se tolera un poco más de movimiento)
+  let down: { x: number; y: number; t: number; slop: number } | null = null;
+  on(interaction, "pointerdown", ((e: PointerEvent) => {
+    down = { x: e.clientX, y: e.clientY, t: performance.now(), slop: e.pointerType === "mouse" ? 6 : 12 };
+  }) as EventListener);
   on(interaction, "pointerup", ((e: PointerEvent) => {
     if (!down) return;
     const moved = Math.hypot(e.clientX - down.x, e.clientY - down.y);
-    if (moved < 6 && performance.now() - down.t < 500) api.play("wave");
+    if (moved < down.slop && performance.now() - down.t < 700) greet("click");
     down = null;
   }) as EventListener);
+  on(interaction, "pointercancel", () => { down = null; });
+
+  // Habla: globo de diálogo junto a la boca durante SAY_TIME segundos
+  const talk = { t: 0 };
+  const SAY_ANCHOR = new THREE.Vector3(14.5, 8.3, 7.6); // junto a la quijada (lado derecho en pantalla), en coordenadas de la cabeza
+  const sayAt = new THREE.Vector3();
+  const placeBubble = () => {
+    const hr = host.getBoundingClientRect(), ir = interaction.getBoundingClientRect();
+    sayAt.copy(SAY_ANCHOR);
+    J.head.localToWorld(sayAt).project(camera);
+    const x = hr.left + ((sayAt.x + 1) / 2) * hr.width, y = hr.top + ((1 - sayAt.y) / 2) * hr.height;
+    // Ancho libre a la derecha; si no alcanza para SAY_MIN_W, el globo se corre a la izquierda
+    const room = Math.round(document.documentElement.clientWidth - x - 10);
+    interaction.style.setProperty("--say-x", `${(x - ir.left).toFixed(1)}px`);
+    interaction.style.setProperty("--say-y", `${(y - ir.top).toFixed(1)}px`);
+    interaction.style.setProperty("--say-room", `${room}px`);
+    interaction.style.setProperty("--say-shift", `${THREE.MathUtils.clamp(SAY_MIN_W - room, 0, 80)}px`);
+  };
+  cleanups.push(() => ["--say-x", "--say-y", "--say-room", "--say-shift"].forEach((p) => interaction.style.removeProperty(p)));
+  const say = (kind: PaulSay) => {
+    if (!onSay) return;
+    placeBubble();
+    talk.t = SAY_TIME;
+    onSay(kind);
+  };
+
+  // Al saludar (clic o volver arriba) deja de seguir el puntero y mira de frente a la pantalla
+  const front = { t: 0, v: 0 };
+  const greet = (kind: PaulSay) => {
+    api.play("wave");
+    front.t = ACTIONS.wave.dur;
+    say(kind);
+  };
 
   // La cabeza (y un poco el torso) sigue al puntero; los ángulos se recalculan
   // en cada cuadro para que la mirada siga fija aunque la página se desplace.
@@ -889,10 +934,14 @@ export function createPaulScene({ host, interaction, fonts, onReady }: PaulScene
     scroll.t = reduceMotion ? 0 : clamp01(y / TILT_RANGE);
     if (!scroll.away && y > BYE_AT) {
       scroll.away = true;
-      if (ready && !reduceMotion) api.play("bye");
+      if (ready && !reduceMotion) {
+        api.play("bye");
+        front.t = 0;
+        say("bye");
+      }
     } else if (scroll.away && y < HELLO_AT) {
       scroll.away = false;
-      if (ready && !reduceMotion) api.play("wave");
+      if (ready && !reduceMotion) greet("hello");
     }
   };
   // Si la página carga ya desplazada, arranca mirando abajo pero sin despedirse
@@ -948,20 +997,31 @@ export function createPaulScene({ host, interaction, fonts, onReady }: PaulScene
     anim.last = out;
     const az = Math.atan2(camera.position.x, camera.position.z);
     const facing = Math.max(0, Math.cos(az));
-    aimAtPointer(az);
+    front.t = Math.max(0, front.t - dt);
+    front.v += ((front.t > 0 ? 1 : 0) - front.v) * Math.min(1, dt * 6);
+    if (front.t > 0) {
+      look.tx = THREE.MathUtils.clamp(THREE.MathUtils.radToDeg(az), -LOOK_YAW, LOOK_YAW);
+      look.ty = 0;
+    } else aimAtPointer(az);
     look.x += (look.tx - look.x) * Math.min(1, dt * 6);
     look.y += (look.ty - look.y) * Math.min(1, dt * 6);
     scroll.v += (scroll.t - scroll.v) * Math.min(1, dt * 5);
-    // El torso acompaña parte del giro; con el scroll la mirada baja y deja de seguir el puntero en vertical
+    // El torso acompaña parte del giro; con el scroll la mirada baja y deja de seguir el puntero
+    // en vertical. Al mirar de frente se anulan el giro propio de la pose y la cabeza gacha.
     const yaw = look.x * facing;
-    const pitch = lerp(look.y * facing, SCROLL_TILT, scroll.v);
+    const pitch = lerp(look.y * facing, SCROLL_TILT, scroll.v * (1 - front.v));
     applyPose({
       ...out,
       torsoRy: out.torsoRy + yaw * 0.22,
       torsoRx: out.torsoRx + pitch * 0.12,
-      headRy: out.headRy + yaw * 0.78,
+      headRy: out.headRy * (1 - front.v) + yaw * 0.78,
       headRx: THREE.MathUtils.clamp(out.headRx + pitch * 0.88, -24, 34),
     });
+    if (talk.t > 0) {
+      talk.t -= dt;
+      placeBubble();
+      if (talk.t <= 0) onSay?.(null);
+    }
   };
 
   // Bucle de render (se pausa fuera de pantalla o con la pestaña oculta)

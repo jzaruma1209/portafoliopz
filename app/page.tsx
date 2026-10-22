@@ -253,7 +253,7 @@ export default function Home() {
                   speed={2}
                   delay={0}
                   color="var(--color-foreground)"
-                  shineColor="var(--color-accent)"
+                  shineColor="var(--shine)"
                   spread={120}
                   direction="left"
                   yoyo={false}
