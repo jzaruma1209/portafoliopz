@@ -407,12 +407,12 @@ body {
   color: rgba(255, 255, 255, 0.02);
 }
 
-/* Gradiente para el botón (rojo de marca; --accent es el gris de shadcn) */
+/* Gradiente para el botón (verde; --accent es el gris de shadcn) */
 .btn-gradient {
   background: linear-gradient(
     135deg,
-    var(--accent-red) 0%,
-    var(--accent-dark) 100%
+    #22c55e 0%,
+    #16a34a 100%
   );
   transition: all 0.3s ease;
 }
@@ -420,11 +420,11 @@ body {
 .btn-gradient:hover {
   background: linear-gradient(
     135deg,
-    var(--accent-light) 0%,
-    var(--accent-red) 100%
+    #4ade80 0%,
+    #22c55e 100%
   );
   transform: translateY(-2px);
-  box-shadow: 0 10px 30px -10px rgba(239, 68, 68, 0.5);
+  box-shadow: 0 10px 30px -10px rgba(34, 197, 94, 0.5);
 }
 
 @layer base {
